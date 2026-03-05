@@ -5,6 +5,7 @@ import (
 	//"math"
 	"slices"
 	"strings"
+	"unicode/utf8"
 )
 
 type Dimension struct {
@@ -30,7 +31,9 @@ type BarGraph struct {
 
 func (bg BarGraph) Render(data []int, window Dimension) string {
 
-	if window.width < len(data) {
+	componentSize := utf8.RuneCountInString(bg.component)
+
+	if window.width < len(data) * componentSize {
 		return "Window dimenstions too small"
 	}
 
@@ -57,7 +60,7 @@ func (bg BarGraph) Render(data []int, window Dimension) string {
 			if float64(dataVal) >= (float64(i) * dataScale) {
 				tmpStr.WriteString(bg.component)
 			} else {
-				tmpStr.WriteString(" ")
+				tmpStr.WriteString(strings.Repeat(" ", componentSize))
 			}
 		}
 
