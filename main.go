@@ -3,22 +3,21 @@ package main
 import (
 	"fmt"
 	"os"
-	"time"
 
 	tea "charm.land/bubbletea/v2"
 )
 
 type model struct {
-	data       []int
-	method     SortingMethod
-	graph      ArrayGraph
-	dims       Dimension
-	delay      int
-	programPtr *tea.Program
+	data    []int
+	method  SortingMethod
+	graph   ArrayGraph
+	dims    Dimension
+	delay   int
+	program *tea.Program
 }
 
-type programPtrMsg struct{ programPtr *tea.Program }
-type startSort struct{}
+type ProgramPtrMsg struct{ ProgramPtr *tea.Program }
+type StartSortMsg struct{}
 
 func InitialModel() model {
 	return model{
@@ -42,17 +41,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 
-	case startSort:
-		go m.method.sort(m)
+	case ProgramPtrMsg:
+		m.program = msg.ProgramPtr
 		return m, nil
 
-	case programPtrMsg:
-		m.programPtr = msg.programPtr
+	case StartSortMsg:
+		go m.method.Sort(m)
 		return m, nil
 
-	case sortStep:
-		if msg.sorted {
-			return m, tea.Quit
+	case RenderStepMsg:
+		if msg.IsSorted { // future handling for when the algorithm completes sorting
+			return m, tea.Quit // for now, we just quit
 		}
 		return m, nil
 	}
@@ -66,13 +65,7 @@ func (m model) View() tea.View {
 
 func main() {
 	p := tea.NewProgram(InitialModel())
-
-	go func() { // temporary setup, setup program ptr then start sorting after 2 secs
-		time.Sleep(time.Second * 1)
-		p.Send(programPtrMsg{p})
-		time.Sleep(time.Second * 1)
-		p.Send(startSort{})
-	}()
+	p.Send(ProgramPtrMsg{p})
 
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error: %v\n", err)
