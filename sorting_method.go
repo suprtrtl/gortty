@@ -21,6 +21,8 @@ func (bs BubbleSort) GetSortingSteps(data []int) (steps [][]int) {
 				swapped = true
 
 				// Add array to steps list
+				tmp := make([]int, len(data))
+				copy(tmp, data)
 				steps = append(steps, data)
 			}
 		}
