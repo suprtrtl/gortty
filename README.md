@@ -19,8 +19,8 @@ go run .
     - [x] Using goroutine setup async array that sends messages to tui
 - [ ] Write Bubble Tea Tui Code
     - [x] Foundational program
-    - [ ] Fullscreen Capabilities
-    - [ ] Dynamic window Resizing
+    - [x] Fullscreen Capabilities
+    - [x] Dynamic window Resizing
 - [ ] Sorting algorithms
     - [x] Bubble Sort
     - [ ] Quick Sort
@@ -28,3 +28,4 @@ go run .
     - [ ] Selection Sort
     - [ ] Bogo Sort
     - [ ] ...
+- [ ] Some way of configuring whether through a file or flags
