@@ -1,17 +1,19 @@
 package main
 
+type SortingSteps [][]int
+
 type SortingMethod interface {
 	// Takes in array and returns a list of all total arrays ever modified from sorting,
 	// terrible space efficiency and should be replaced however better solution unclear
-	GetSortingSteps([]int) [][]int
+	GetSortingSteps([]int) SortingSteps
 }
 
 type BubbleSort struct{}
 
-func (bs BubbleSort) GetSortingSteps(data []int) (steps [][]int) {
+func (bs BubbleSort) GetSortingSteps(data []int) SortingSteps {
 	n := len(data)
 	// Also inefficient should get a size and capacity beforehand
-	steps = [][]int{data}
+	steps := SortingSteps{data}
 
 	for i := range n {
 		swapped := false
