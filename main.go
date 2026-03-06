@@ -65,7 +65,10 @@ func (m model) View() tea.View {
 
 func main() {
 	p := tea.NewProgram(InitialModel())
-	p.Send(ProgramPtrMsg{p})
+	go func() {
+		p.Send(ProgramPtrMsg{p})
+		p.Send(StartSortMsg{})
+	}()
 
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error: %v\n", err)
