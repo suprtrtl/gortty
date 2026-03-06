@@ -12,7 +12,7 @@ type model struct {
 }
 
 func main() {
-	bg := BarGraph{component: "▉"}
+	bg := BarGraph{component: "▐█▌"}
 	dims := Dimension{
 		width: 225,
 		height: 50,
