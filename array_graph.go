@@ -9,14 +9,16 @@ import (
 )
 
 type Dimension struct {
-	width  int
-	height int
+	width   int
+	height  int
+	spacing int
 }
 
-func NewDimension(w int, h int) Dimension {
+func NewDimension(w int, h int, spacing int) Dimension {
 	return Dimension{
-		width:  w,
-		height: h,
+		width:   w,
+		height:  h,
+		spacing: spacing,
 	}
 }
 
@@ -33,8 +35,11 @@ func (bg BarGraph) Render(data []int, window Dimension) string {
 
 	componentSize := utf8.RuneCountInString(bg.component)
 
-	if window.width < len(data) * componentSize {
-		return "Window dimenstions too small"
+	// Calculates the max amount of space required to render
+	maxDataWidth := len(data)*componentSize + 2*window.spacing
+
+	if window.width < maxDataWidth {
+		return "Window dimensions too small"
 	}
 
 	maxDataHeight := 0
@@ -47,14 +52,19 @@ func (bg BarGraph) Render(data []int, window Dimension) string {
 		maxDataHeight = val
 	}
 
-	dataScale := float64(maxDataHeight) / float64(window.height)
+	numChars := window.height - 2*window.spacing
 
-	numChars := window.height
+	dataScale := float64(maxDataHeight) / float64(numChars)
+
+	centerSpacing := (window.width - maxDataWidth) / 2
 
 	strSlice := []string{}
 
+
 	for i := range numChars {
 		var tmpStr strings.Builder
+
+		tmpStr.WriteString(strings.Repeat(" ", centerSpacing))
 
 		for _, dataVal := range data {
 			if float64(dataVal) >= (float64(i) * dataScale) {
@@ -66,6 +76,8 @@ func (bg BarGraph) Render(data []int, window Dimension) string {
 
 		strSlice = append(strSlice, tmpStr.String()+"\n")
 	}
+
+	strSlice = append(strSlice, strings.Repeat("\n", window.spacing))
 
 	slices.Reverse(strSlice)
 

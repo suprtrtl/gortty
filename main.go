@@ -24,7 +24,7 @@ func InitialModel() model {
 		data:   []int{6, 2, 7, 1, 4, 8, 3, 5, 6, 2, 7, 1, 4, 8, 3, 5, 6, 2, 7, 1, 4, 8, 3, 5},
 		method: BubbleSort{},
 		graph:  BarGraph{component: "▐▌"},
-		dims:   Dimension{width: 48, height: 30},
+		dims:   Dimension{width: 0, height: 0, spacing: 2},
 		delay:  50,
 	}
 }
@@ -47,12 +47,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case StartSortMsg:
 		go m.method.Sort(m)
-		return m, nil
+		return m, tea.RequestWindowSize
 
 	case RenderStepMsg:
 		if msg { // future handling for when the algorithm completes sorting
 			return m, tea.Quit // for now, we just quit
 		}
+		return m, tea.RequestWindowSize
+
+	case tea.WindowSizeMsg:
+
+		m.dims = Dimension{
+			width:  msg.Width,
+			height: msg.Height,
+			spacing: m.dims.spacing,
+		}
+
 		return m, nil
 	}
 
@@ -60,7 +70,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() tea.View {
-	return tea.NewView(m.graph.Render(m.data, m.dims))
+	graph := m.graph.Render(m.data, m.dims)
+	view := tea.NewView(graph)
+
+	view.AltScreen = true
+
+	return view
 }
 
 func main() {
