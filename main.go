@@ -11,7 +11,7 @@ type model struct {
 }
 
 func main() {
-	bg := BarGraph{component: "▐▌"}
+	bg := BrailleGraph{}
 	dims := Dimension{
 		width: 48,
 		height: 30,
