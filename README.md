@@ -15,6 +15,16 @@ go run .
 - [x] Implement BarGraph type
 - [ ] Implement BraileGraph type
 - [x] SortingMethod Interface
-    - [x] Come up with a way to store changes within an array ~(preferably without sorting the array beforehand)~
-    - [ ] ~ArrayFrame Potentially?~
+    - [ ] ~Come up with a way to store changes within an array (preferably without sorting the array beforehand)~
+    - [x] Using goroutine setup async array that sends messages to tui
 - [ ] Write Bubble Tea Tui Code
+    - [x] Foundational program
+    - [ ] Fullscreen Capabilities
+    - [ ] Dynamic window Resizing
+- [ ] Sorting algorithms
+    - [x] Bubble Sort
+    - [ ] Quick Sort
+    - [ ] Merge Sort
+    - [ ] Selection Sort
+    - [ ] Bogo Sort
+    - [ ] ...
