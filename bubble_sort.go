@@ -1,10 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func bubble_sort(ag ArrayGraph, data []int, dims Dimension) {
 	for range data {
 		sorted := true
+
 		for index := 0; index < len(data)-1; index++ {
 			if data[index] > data[index+1] {
 				sorted = false
@@ -14,11 +18,12 @@ func bubble_sort(ag ArrayGraph, data []int, dims Dimension) {
 				data[index+1] = tmp
 
 				fmt.Println(ag.Render(data, dims))
+				time.Sleep(time.Millisecond * 25)
 			}
+		} // end of for loop
 
-			if sorted {
-				return
-			}
+		if sorted {
+			return
 		}
 	}
 }
