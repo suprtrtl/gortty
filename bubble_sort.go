@@ -1,28 +1,33 @@
 package main
 
 import (
-	"fmt"
 	"time"
 )
 
-func bubble_sort(ag ArrayGraph, data []int, dims Dimension) {
-	for range data {
+type sortStep struct {
+	sorted bool
+}
+
+type SortingMethod interface {
+	sort(model)
+}
+
+type BubbleSort struct{}
+
+func (bs BubbleSort) sort(m model) {
+	for itr := range m.data {
 		sorted := true
-
-		for index := 0; index < len(data)-1; index++ {
-			if data[index] > data[index+1] {
+		for index := 0; index < len(m.data)-1-itr; index++ {
+			if m.data[index] > m.data[index+1] {
 				sorted = false
-
-				tmp := data[index]
-				data[index] = data[index+1]
-				data[index+1] = tmp
-
-				fmt.Println(ag.Render(data, dims))
-				time.Sleep(time.Millisecond * 25)
+				m.data[index], m.data[index+1] = m.data[index+1], m.data[index]
+				m.programPtr.Send(sortStep{false})
+				time.Sleep(time.Millisecond * time.Duration(m.delay))
 			}
-		} // end of for loop
+		}
 
 		if sorted {
+			m.programPtr.Send(sortStep{true})
 			return
 		}
 	}
