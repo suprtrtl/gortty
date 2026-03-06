@@ -16,7 +16,7 @@ type model struct {
 	program *tea.Program
 }
 
-type ProgramPtrMsg struct{ ProgramPtr *tea.Program }
+type ProgramPtrMsg *tea.Program
 type StartSortMsg struct{}
 
 func InitialModel() model {
@@ -42,7 +42,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case ProgramPtrMsg:
-		m.program = msg.ProgramPtr
+		m.program = msg
 		return m, nil
 
 	case StartSortMsg:
@@ -50,7 +50,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case RenderStepMsg:
-		if msg.IsSorted { // future handling for when the algorithm completes sorting
+		if msg { // future handling for when the algorithm completes sorting
 			return m, tea.Quit // for now, we just quit
 		}
 		return m, nil
@@ -66,7 +66,7 @@ func (m model) View() tea.View {
 func main() {
 	p := tea.NewProgram(InitialModel())
 	go func() {
-		p.Send(ProgramPtrMsg{p})
+		p.Send(ProgramPtrMsg(p))
 		p.Send(StartSortMsg{})
 	}()
 

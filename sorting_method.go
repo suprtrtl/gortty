@@ -4,9 +4,9 @@ import (
 	"time"
 )
 
-type RenderStepMsg struct {
-	IsSorted bool
-}
+// Holds Whether or not array is sorted
+type RenderStepMsg bool
+
 
 type SortingMethod interface {
 	Sort(model)
@@ -21,13 +21,13 @@ func (bs BubbleSort) Sort(m model) {
 			if m.data[index] > m.data[index+1] {
 				sorted = false
 				m.data[index], m.data[index+1] = m.data[index+1], m.data[index]
-				m.program.Send(RenderStepMsg{false})
+				m.program.Send(RenderStepMsg(false))
 				time.Sleep(time.Millisecond * time.Duration(m.delay))
 			}
 		}
 
 		if sorted {
-			m.program.Send(RenderStepMsg{true})
+			m.program.Send(RenderStepMsg(true))
 			return
 		}
 	}
