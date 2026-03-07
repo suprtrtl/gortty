@@ -24,8 +24,9 @@ go run .
 - [ ] Sorting algorithms
     - [x] Bubble Sort
     - [ ] Quick Sort
-    - [ ] Merge Sort
-    - [ ] Selection Sort
-    - [ ] Bogo Sort
+    - [x] Merge Sort
+    - [x] Selection Sort
+    - [x] Bogo Sort
+    - [ ] Shell Sort
     - [ ] ...
 - [ ] Some way of configuring whether through a file or flags
