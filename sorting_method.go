@@ -110,9 +110,6 @@ func (ms MergeSort) merge(model model, data []int, l int, m int, r int) {
 			j++
 		}
 		k++
-
-		model.program.Send(RenderStepMsg(false))
-		time.Sleep(time.Millisecond * time.Duration(model.delay))
 	}
 
 	for i < n1 {
@@ -127,6 +124,8 @@ func (ms MergeSort) merge(model model, data []int, l int, m int, r int) {
 		k++
 	}
 
+	model.program.Send(RenderStepMsg(false))
+	time.Sleep(time.Millisecond * time.Duration(model.delay))
 }
 
 func (ms MergeSort) mergeSort(model model, data []int, l int, r int) {
@@ -144,6 +143,5 @@ func (ms MergeSort) mergeSort(model model, data []int, l int, r int) {
 func (ms MergeSort) Sort(m model) {
 	ms.mergeSort(m, m.data, 0, len(m.data)-1)
 	m.program.Send(RenderStepMsg(true))
-	m.program.Send(RenderStepMsg(false))
 	time.Sleep(time.Millisecond * time.Duration(m.delay))
 }
