@@ -2,7 +2,10 @@ module gortty/main
 
 go 1.25.7
 
-require charm.land/bubbletea/v2 v2.0.1
+require (
+	charm.land/bubbletea/v2 v2.0.1
+	go.yaml.in/yaml/v4 v4.0.0-rc.4
+)
 
 require (
 	github.com/charmbracelet/colorprofile v0.4.1 // indirect
