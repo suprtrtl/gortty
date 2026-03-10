@@ -3,6 +3,7 @@ package main
 import (
 	//	"fmt"
 	//"math"
+	color "github.com/fatih/color"
 	"slices"
 	"strings"
 	"unicode/utf8"
@@ -24,14 +25,14 @@ func NewDimension(w int, h int, spacing int) Dimension {
 
 type ArrayGraph interface {
 	// Returns a string fit for rendering with bubble tea
-	Render([]int, Dimension) string
+	Render([]int, Dimension, highlightMap) string
 }
 
 type BarGraph struct {
 	component string
 }
 
-func (bg BarGraph) Render(data []int, window Dimension) string {
+func (bg BarGraph) Render(data []int, window Dimension, hl highlightMap) string {
 
 	componentSize := utf8.RuneCountInString(bg.component)
 
@@ -60,15 +61,18 @@ func (bg BarGraph) Render(data []int, window Dimension) string {
 
 	strSlice := []string{}
 
-
 	for i := range numChars {
 		var tmpStr strings.Builder
 
 		tmpStr.WriteString(strings.Repeat(" ", centerSpacing))
 
-		for _, dataVal := range data {
+		for index, dataVal := range data {
 			if float64(dataVal) >= (float64(i) * dataScale) {
-				tmpStr.WriteString(bg.component)
+				if _, ok := hl[index]; ok {
+					tmpStr.WriteString(color.GreenString(bg.component)) // gotta figure out a way to make this customizable
+				} else {
+					tmpStr.WriteString(bg.component) // also these nested if statements are kinda silly. fix this, me - andrei
+				}
 			} else {
 				tmpStr.WriteString(strings.Repeat(" ", componentSize))
 			}

@@ -5,11 +5,15 @@ import (
 	"time"
 )
 
-// Holds Whether or not array is sorted
-type RenderStepMsg bool
+// Render instructions
+type highlightMap map[int]struct{} // use keys as a list of elements to highlight (with O(1) lookup for faster rendering)
+type RenderStepMsg struct {
+	isSorted    bool
+	highlighted highlightMap
+}
 
 type SortingMethod interface {
-	Sort(model)
+	Sort(model, bool) // bool (useWeights) modifies delay for less efficient algorithms so they run faster
 }
 
 type BogoSort struct{}
@@ -18,30 +22,41 @@ type QuickSort struct{}
 type SelectionSort struct{}
 type MergeSort struct{}
 
-func (bg BogoSort) Sort(m model) {
+func (bg BogoSort) Sort(m model, useWeights bool) {
+	delay := m.delay
+	if useWeights {
+		delay = int(float32(delay) * 0.25)
+	}
+
 	for {
 		sorted := true
 		for index := 0; index < len(m.data)-1; index++ {
 			if m.data[index] > m.data[index+1] {
 				sorted = false
+				break
 			}
 		}
 
 		if sorted {
-			m.program.Send(RenderStepMsg(true))
+			m.program.Send(RenderStepMsg{true, highlightMap{}})
 			return
 		} else {
 			rand.Shuffle(len(m.data), func(i, j int) {
 				m.data[i], m.data[j] = m.data[j], m.data[i]
 			})
-			m.program.Send(RenderStepMsg(false))
+			m.program.Send(RenderStepMsg{false, map[int]struct{}{}})
 		}
 
-		time.Sleep(time.Millisecond * time.Duration(m.delay))
+		time.Sleep(time.Millisecond * time.Duration(delay))
 	}
 }
 
-func (bs BubbleSort) Sort(m model) {
+func (bs BubbleSort) Sort(m model, useWeights bool) {
+	delay := m.delay
+	if useWeights {
+		delay = int(float32(delay) * 0.25)
+	}
+
 	for itr := range m.data {
 		sorted := true
 		for index := 0; index < len(m.data)-1-itr; index++ {
@@ -49,33 +64,41 @@ func (bs BubbleSort) Sort(m model) {
 				sorted = false
 				m.data[index], m.data[index+1] = m.data[index+1], m.data[index]
 
-				m.program.Send(RenderStepMsg(false))
-				time.Sleep(time.Millisecond * time.Duration(m.delay))
+				m.program.Send(RenderStepMsg{false, highlightMap{index: {}}})
+				time.Sleep(time.Millisecond * time.Duration(delay))
 			}
 		}
 
 		if sorted {
-			m.program.Send(RenderStepMsg(true))
+			m.program.Send(RenderStepMsg{true, highlightMap{}})
 			return
 		}
 	}
 }
 
-func (ss SelectionSort) Sort(m model) {
+func (ss SelectionSort) Sort(m model, useWeights bool) {
+	delay := m.delay
+	if useWeights {
+		delay = int(float32(delay) * 0.25)
+	}
+
 	for itr := 0; itr < len(m.data)-1; itr++ {
 		minIndex := itr
 		for index := itr + 1; index < len(m.data); index++ {
 			if m.data[minIndex] > m.data[index] {
 				minIndex = index
-				time.Sleep(time.Millisecond * time.Duration(m.delay))
 			}
+			m.program.Send(RenderStepMsg{false, highlightMap{
+				minIndex: {},
+				index:    {},
+			}})
+			time.Sleep(time.Millisecond * time.Duration(delay))
 		}
 
 		m.data[itr], m.data[minIndex] = m.data[minIndex], m.data[itr]
-		m.program.Send(RenderStepMsg(false))
 	}
 
-	m.program.Send(RenderStepMsg(true))
+	m.program.Send(RenderStepMsg{true, highlightMap{}})
 }
 
 // Merge sort methods
@@ -124,7 +147,7 @@ func (ms MergeSort) merge(model model, data []int, l int, m int, r int) {
 		k++
 	}
 
-	model.program.Send(RenderStepMsg(false))
+	model.program.Send(RenderStepMsg{false, highlightMap{}}) // TODO: @suprtrtl, i dunno what to highlight here. from: andrei
 	time.Sleep(time.Millisecond * time.Duration(model.delay))
 }
 
@@ -140,8 +163,8 @@ func (ms MergeSort) mergeSort(model model, data []int, l int, r int) {
 	}
 }
 
-func (ms MergeSort) Sort(m model) {
+func (ms MergeSort) Sort(m model, _ bool) {
 	ms.mergeSort(m, m.data, 0, len(m.data)-1)
-	m.program.Send(RenderStepMsg(true))
+	m.program.Send(RenderStepMsg{true, highlightMap{}})
 	time.Sleep(time.Millisecond * time.Duration(m.delay))
 }
