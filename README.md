@@ -21,6 +21,8 @@ go run .
     - [x] Foundational program
     - [x] Fullscreen Capabilities
     - [x] Dynamic window Resizing
+    - [ ] Fancy UI
+    - [ ] COLORS!
 - [ ] Sorting algorithms
     - [x] Bubble Sort
     - [ ] Quick Sort
@@ -28,5 +30,7 @@ go run .
     - [x] Selection Sort
     - [x] Bogo Sort
     - [ ] Shell Sort
+    - [ ] Heap Sort
+    - [ ] Pancake Sort
     - [ ] ...
-- [ ] Some way of configuring whether through a file or flags
+- [ ] Configuration File
