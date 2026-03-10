@@ -1,8 +1,6 @@
 package main
 
 import (
-	//	"fmt"
-	//"math"
 	color "github.com/fatih/color"
 	"slices"
 	"strings"
@@ -61,24 +59,9 @@ func (bg BarGraph) Render(data []int, window Dimension, hl highlightMap) string 
 
 	strSlice := []string{}
 
-	for i := range numChars {
-		var tmpStr strings.Builder
-
-		tmpStr.WriteString(strings.Repeat(" ", centerSpacing))
-
-		for index, dataVal := range data {
-			if float64(dataVal) >= (float64(i) * dataScale) {
-				if _, ok := hl[index]; ok {
-					tmpStr.WriteString(color.GreenString(bg.component)) // gotta figure out a way to make this customizable
-				} else {
-					tmpStr.WriteString(bg.component) // also these nested if statements are kinda silly. fix this, me - andrei
-				}
-			} else {
-				tmpStr.WriteString(strings.Repeat(" ", componentSize))
-			}
-		}
-
-		strSlice = append(strSlice, tmpStr.String()+"\n")
+	for char := range numChars {
+		row := bg.WriteRow(data, componentSize, numChars, dataScale, centerSpacing, char, hl)
+		strSlice = append(strSlice, row)
 	}
 
 	strSlice = append(strSlice, strings.Repeat("\n", window.spacing))
@@ -88,4 +71,27 @@ func (bg BarGraph) Render(data []int, window Dimension, hl highlightMap) string 
 	s := strings.Join(strSlice, "")
 
 	return s
+}
+
+func (bg BarGraph) WriteRow(data []int, componentSize int, numChars int, dataScale float64, centerSpacing int, char int, hl highlightMap) string {
+	var builder strings.Builder
+
+	builder.WriteString(strings.Repeat(" ", centerSpacing))
+
+	for index, dataVal := range data {
+		if float64(dataVal) >= (float64(char) * dataScale) {
+			bg.SetComponentColor(&builder, index, hl)
+		} else {
+			builder.WriteString(strings.Repeat(" ", componentSize))
+		}
+	}
+	return builder.String() + "\n"
+}
+
+func (bg BarGraph) SetComponentColor(builder *strings.Builder, index int, hl highlightMap) {
+	if _, ok := hl[index]; ok {
+		builder.WriteString(color.GreenString(bg.component))
+	} else {
+		builder.WriteString(bg.component)
+	}
 }

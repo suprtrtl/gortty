@@ -6,14 +6,18 @@ import (
 )
 
 // Render instructions
-type highlightMap map[int]struct{} // use keys as a list of elements to highlight (with O(1) lookup for faster rendering)
+
+// use keys as a list of elements to highlight (with O(1) lookup for faster rendering)
+type highlightMap map[int]struct{}
 type RenderStepMsg struct {
 	isSorted    bool
 	highlighted highlightMap
 }
 
 type SortingMethod interface {
-	Sort(model, bool) // bool (useWeights) modifies delay for less efficient algorithms so they run faster
+	// model - bubble tea model
+	// bool (useWeights) modifies delay for less efficient algorithms so they run faster
+	Sort(model, bool)
 }
 
 type BogoSort struct{}
