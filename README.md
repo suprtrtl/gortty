@@ -9,7 +9,7 @@ go run .
 
 ```
 
-![](https://github.com/suprtrtl/gortty/gallery/gortty.gif)
+![](https://github.com/suprtrtl/gortty/blob/main/gallery/gortty.gif)
 
 ## TODO
 
