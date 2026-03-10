@@ -10,13 +10,14 @@ import (
 )
 
 type model struct {
-	data    []int
-	queue   *SortingQueue
-	method  SortingMethod
-	graph   ArrayGraph
-	dims    Dimension
-	delay   int
-	program *tea.Program
+	data        []int
+	queue       *SortingQueue
+	method      SortingMethod
+	graph       ArrayGraph
+	dims        Dimension
+	delay       int
+	highlighted highlightMap // map[int]struct{} where keys are used for O(1) lookup of highlighted indicies
+	program     *tea.Program
 }
 
 type ProgramPtrMsg *tea.Program
@@ -30,12 +31,12 @@ func InitialModel() model {
 			388, 45, 343, 116, 259, 362, 70, 448, 184, 296, 135, 379, 22, 461, 243, 174, 395, 109, 264, 328,
 			50, 412, 286, 167, 354, 81, 430, 190, 305, 14, 442, 238, 176, 397, 101, 273, 336, 65, 459, 193},
 
-		queue: &sq,
+		queue:  &sq,
 		method: nil,
-		graph: BarGraph{component: "▐▌"},
+		graph:  BarGraph{component: "█"},
 		// graph: BarGraph{component: "▊"},
 		dims:  Dimension{width: 0, height: 0, spacing: 2},
-		delay: 25,
+		delay: 50,
 	}
 }
 
@@ -66,11 +67,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.method = method
 		m.RandomizeData()
 		time.Sleep(time.Millisecond * time.Duration(m.delay))
-		go m.method.Sort(m)
+		go m.method.Sort(m, true) // by default i'm enabling weights until configs are done
 		return m, tea.RequestWindowSize
 
 	case RenderStepMsg:
-		if msg { // future handling for when the algorithm completes sorting
+		m.highlighted = msg.highlighted
+		if msg.isSorted { // future handling for when the algorithm completes sorting
 			return m, func() tea.Msg {
 				return StartSortMsg{}
 			} // Sort again
@@ -92,17 +94,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() tea.View {
-	graph := m.graph.Render(m.data, m.dims)
+	graph := m.graph.Render(m.data, m.dims, m.highlighted)
 
-	s := graph + "\n";
+	s := graph + "\n"
 
 	switch m.method {
 	case BubbleSort{}:
-		s += "bubble sort";
+		s += "bubble sort"
 	case SelectionSort{}:
-		s += "selection sort";
+		s += "selection sort"
 	case MergeSort{}:
-		s += "merge sort";
+		s += "merge sort"
 	}
 
 	view := tea.NewView(s)
