@@ -27,7 +27,6 @@ func NewSortingQueue() SortingQueue {
 	return sq
 }
 
-// Imma be real i needed AI to figure out why the next wasnt working :(
 func (sq *SortingQueue) randomize() {
     rand.Shuffle(len(sq.methods), func(i, j int) {
         sq.methods[i], sq.methods[j] = sq.methods[j], sq.methods[i]

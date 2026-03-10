@@ -9,6 +9,8 @@ go run .
 
 ```
 
+![](https://github.com/suprtrtl/gortty/blob/main/gallery/gortty.gif)
+
 ## TODO
 
 - [x] Implement ArrayGraph interface
