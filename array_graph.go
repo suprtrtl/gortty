@@ -30,9 +30,14 @@ type BarGraph struct {
 	component string
 }
 
+func (bg BarGraph) GetComponentSize() int {
+	componentSize := utf8.RuneCountInString(bg.component)
+	return componentSize;
+}
+
 func (bg BarGraph) Render(data []int, window Dimension, hl highlightMap) string {
 
-	componentSize := utf8.RuneCountInString(bg.component)
+	componentSize := bg.GetComponentSize()
 
 	// Calculates the max amount of space required to render
 	maxDataWidth := len(data)*componentSize + 2*window.spacing

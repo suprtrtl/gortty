@@ -2,12 +2,23 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
 	"time"
 
 	tea "charm.land/bubbletea/v2"
 )
+
+func GenerateSteppedArray(n uint) []int{
+	data := make([]int, n)
+
+	for i := range data {
+		data[i] = i + 1;
+	}
+
+	return data
+}
 
 type model struct {
 	data        []int
@@ -26,23 +37,41 @@ type StartSortMsg struct{}
 func InitialModel() model {
 	sq := NewSortingQueue()
 	return model{
-		data: []int{432, 17, 298, 401, 56, 73, 489, 120, 345, 210, 67, 154, 399, 278, 44, 311, 92, 407, 188, 265,
-			134, 358, 21, 476, 303, 84, 250, 168, 392, 59, 147, 326, 415, 203, 12, 437, 290, 361, 75, 224},
+		data: GenerateSteppedArray(4),
 		queue:  &sq,
 		method: nil,
-		graph:  BarGraph{component: "█"},
+		graph:  BarGraph{component: "▉"},
 		// graph: BarGraph{component: "▊"},
 		dims:  Dimension{width: 0, height: 0, spacing: 2},
 		delay: 50,
 	}
 }
 
-func (m model) RandomizeData() {
+func (m *model) SetData() {
+	m.DataResize()
+	m.RandomizeData()
+}
+
+func (m *model) DataResize() {
+	numChars := m.dims.height - 2*m.dims.spacing
+	width := float64(m.dims.width-2*m.dims.spacing)
+
+	switch graphType := m.graph.(type) {
+	case BarGraph:
+		width /= float64(graphType.GetComponentSize());
+	}
+
+	multiplier := math.Floor(width / float64(numChars))
+	m.data = GenerateSteppedArray(uint(numChars * int(multiplier)))
+}
+
+func (m *model) RandomizeData() {
 	rand.Shuffle(len(m.data), func(i, j int) {
 		m.data[i], m.data[j] = m.data[j], m.data[i]
 	})
 }
 
+// TODO: We can probably use this instead of the go routine running p.send() after progam init
 func (m model) Init() tea.Cmd {
 	return nil
 }
@@ -62,7 +91,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case StartSortMsg:
 		method := m.queue.Next()
 		m.method = method
-		m.RandomizeData()
+		m.SetData()
 		time.Sleep(time.Millisecond * time.Duration(m.delay))
 		go m.method.Sort(m, true) // by default i'm enabling weights until configs are done
 		return m, tea.RequestWindowSize
