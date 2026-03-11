@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"math/rand"
 	"time"
 )
@@ -20,11 +21,23 @@ type SortingMethod interface {
 	Sort(model, bool)
 }
 
+func IsSorted(data []int) bool {
+	sorted := true
+	for index := 0; index < len(data)-1; index++ {
+		if data[index] > data[index+1] {
+			sorted = false
+			break
+		}
+	}
+	return sorted
+}
+
 type BogoSort struct{}
 type BubbleSort struct{}
 type QuickSort struct{}
 type SelectionSort struct{}
 type MergeSort struct{}
+type CombSort struct{}
 
 func (bg BogoSort) Sort(m model, useWeights bool) {
 	delay := m.delay
@@ -33,13 +46,8 @@ func (bg BogoSort) Sort(m model, useWeights bool) {
 	}
 
 	for {
-		sorted := true
-		for index := 0; index < len(m.data)-1; index++ {
-			if m.data[index] > m.data[index+1] {
-				sorted = false
-				break
-			}
-		}
+
+		sorted := IsSorted(m.data)
 
 		if sorted {
 			m.program.Send(RenderStepMsg{true, highlightMap{}})
@@ -169,6 +177,35 @@ func (ms MergeSort) mergeSort(model model, data []int, l int, r int) {
 
 func (ms MergeSort) Sort(m model, _ bool) {
 	ms.mergeSort(m, m.data, 0, len(m.data)-1)
+	m.program.Send(RenderStepMsg{true, highlightMap{}})
+	time.Sleep(time.Millisecond * time.Duration(m.delay))
+}
+
+func (cs CombSort) Sort(m model, _ bool) {
+	shrink := 1.3
+	gap := len(m.data)
+	sorted := false
+
+	for !sorted {
+		gap = int(math.Floor(float64(gap) / shrink))
+		if gap <= 1 {
+			sorted = true
+			gap = 1
+		}
+
+		for i := range len(m.data) - gap {
+			next := gap + i
+			if m.data[i] > m.data[next] {
+				m.data[i], m.data[next] = m.data[next], m.data[i]
+				sorted = false
+				m.program.Send(RenderStepMsg{false, highlightMap{
+					i: {},
+				}})
+				time.Sleep(time.Millisecond * time.Duration(m.delay))
+			}
+		}
+	}
+
 	m.program.Send(RenderStepMsg{true, highlightMap{}})
 	time.Sleep(time.Millisecond * time.Duration(m.delay))
 }

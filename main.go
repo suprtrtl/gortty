@@ -14,7 +14,7 @@ func GenerateSteppedArray(n uint) []int{
 	data := make([]int, n)
 
 	for i := range data {
-		data[i] = i + 1;
+		data[i] = i;
 	}
 
 	return data
@@ -71,7 +71,7 @@ func (m *model) RandomizeData() {
 	})
 }
 
-// TODO: We can probably use this instead of the go routine running p.send() after progam init
+// TODO: We can probably use this instead of the go routine running p.send() after program init
 func (m model) Init() tea.Cmd {
 	return nil
 }
@@ -124,14 +124,17 @@ func (m model) View() tea.View {
 
 	s := graph + "\n"
 
-	switch m.method {
-	case BubbleSort{}:
+	switch m.method.(type) {
+	case BubbleSort:
 		s += "bubble sort"
-	case SelectionSort{}:
+	case SelectionSort:
 		s += "selection sort"
-	case MergeSort{}:
+	case MergeSort:
 		s += "merge sort"
+	case CombSort:
+		s += "comb sort"
 	}
+	
 
 	view := tea.NewView(s)
 

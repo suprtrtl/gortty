@@ -18,6 +18,7 @@ func NewSortingQueue() SortingQueue {
 			BubbleSort{},
 			SelectionSort{},
 			MergeSort{},
+			CombSort{},
 		},
 		0,
 	}
