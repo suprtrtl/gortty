@@ -3,6 +3,7 @@ package main
 import (
 	"math"
 	"math/rand"
+	// "slices"
 	"time"
 )
 
@@ -86,6 +87,60 @@ func (bs BubbleSort) Sort(m model, useWeights bool) {
 			return
 		}
 	}
+}
+
+func (qs QuickSort) Sort(m model, useWeights bool) {
+	delay := m.delay
+	if useWeights {
+		delay = int(float32(m.delay) * 1.5)
+	}
+	qs.quickSort(m.data, m, delay)
+
+	m.program.Send(RenderStepMsg{true, highlightMap{}})
+}
+
+func (qs QuickSort) quickSort(data []int, m model, delay int) {
+	if len(data) <= 1 {
+		return
+	}
+
+	pivot := data[0]
+	p1, p2 := qs.partition(data, pivot)
+
+	m.program.Send(RenderStepMsg{false, highlightMap{}})
+	time.Sleep(time.Millisecond * time.Duration(delay))
+
+	qs.quickSort(p1, m, delay)
+	qs.quickSort(p2, m, delay)
+}
+
+func (qs QuickSort) partition(data []int, pivot int) (p1 []int, p2 []int) {
+	leftPtr := -1
+	rightPtr := len(data)
+
+	for { // main loop
+		for { // find left element larger than pivot
+			leftPtr++
+			if data[leftPtr] >= pivot {
+				break
+			}
+		}
+
+		for { // find right element smaller than pivot
+			rightPtr--
+			if data[rightPtr] <= pivot {
+				break
+			}
+		}
+
+		if leftPtr > rightPtr { // break loop on cross
+			break
+		}
+
+		data[leftPtr], data[rightPtr] = data[rightPtr], data[leftPtr]
+	}
+
+	return data[0:leftPtr], data[leftPtr:]
 }
 
 func (ss SelectionSort) Sort(m model, useWeights bool) {

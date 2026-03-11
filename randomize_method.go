@@ -15,10 +15,11 @@ func NewSortingQueue() SortingQueue {
 	sq := SortingQueue{
 		[]SortingMethod{
 			// BogoSort{}, - Removing for testing purposes
-			BubbleSort{},
-			SelectionSort{},
-			MergeSort{},
-			CombSort{},
+			// BubbleSort{},
+			// SelectionSort{},
+			// MergeSort{},
+			// CombSort{},
+			QuickSort{},
 		},
 		0,
 	}
@@ -29,18 +30,17 @@ func NewSortingQueue() SortingQueue {
 }
 
 func (sq *SortingQueue) randomize() {
-    rand.Shuffle(len(sq.methods), func(i, j int) {
-        sq.methods[i], sq.methods[j] = sq.methods[j], sq.methods[i]
-    })
+	rand.Shuffle(len(sq.methods), func(i, j int) {
+		sq.methods[i], sq.methods[j] = sq.methods[j], sq.methods[i]
+	})
 }
 
 func (sq *SortingQueue) Next() SortingMethod {
-    if sq.index >= len(sq.methods) {
-        sq.index = 0
-        sq.randomize()
-    }
-    method := sq.methods[sq.index]
-    sq.index++
-    return method
+	if sq.index >= len(sq.methods) {
+		sq.index = 0
+		sq.randomize()
+	}
+	method := sq.methods[sq.index]
+	sq.index++
+	return method
 }
-
