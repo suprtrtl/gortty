@@ -27,7 +27,7 @@ go run .
     - [ ] COLORS!
 - [ ] Sorting algorithms
     - [x] Bubble Sort
-    - [ ] Quick Sort
+    - [x] Quick Sort
     - [x] Merge Sort
     - [x] Selection Sort
     - [x] Bogo Sort
