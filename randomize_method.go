@@ -15,10 +15,10 @@ func NewSortingQueue() SortingQueue {
 	sq := SortingQueue{
 		[]SortingMethod{
 			// BogoSort{}, - Removing for testing purposes
-			// BubbleSort{},
-			// SelectionSort{},
-			// MergeSort{},
-			// CombSort{},
+			BubbleSort{},
+			SelectionSort{},
+			MergeSort{},
+			CombSort{},
 			QuickSort{},
 		},
 		0,

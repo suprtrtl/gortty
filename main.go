@@ -10,11 +10,11 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
-func GenerateSteppedArray(n uint) []int{
+func GenerateSteppedArray(n uint) []int {
 	data := make([]int, n)
 
 	for i := range data {
-		data[i] = i;
+		data[i] = i
 	}
 
 	return data
@@ -37,7 +37,7 @@ type StartSortMsg struct{}
 func InitialModel() model {
 	sq := NewSortingQueue()
 	return model{
-		data: GenerateSteppedArray(4),
+		data:   GenerateSteppedArray(4),
 		queue:  &sq,
 		method: nil,
 		graph:  BarGraph{component: "▉"},
@@ -54,11 +54,11 @@ func (m *model) SetData() {
 
 func (m *model) DataResize() {
 	numChars := m.dims.height - 2*m.dims.spacing
-	width := float64(m.dims.width-2*m.dims.spacing)
+	width := float64(m.dims.width - 2*m.dims.spacing)
 
 	switch graphType := m.graph.(type) {
 	case BarGraph:
-		width /= float64(graphType.GetComponentSize());
+		width /= float64(graphType.GetComponentSize())
 	}
 
 	multiplier := math.Floor(width / float64(numChars))
@@ -133,8 +133,9 @@ func (m model) View() tea.View {
 		s += "merge sort"
 	case CombSort:
 		s += "comb sort"
+	case QuickSort:
+		s += "quick sort"
 	}
-	
 
 	view := tea.NewView(s)
 

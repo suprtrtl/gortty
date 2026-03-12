@@ -67,7 +67,7 @@ func (bg BogoSort) Sort(m model, useWeights bool) {
 func (bs BubbleSort) Sort(m model, useWeights bool) {
 	delay := m.delay
 	if useWeights {
-		delay = int(float32(delay) * 0.25)
+		delay = int(float32(delay) * 0.10)
 	}
 
 	for itr := range m.data {
@@ -92,31 +92,30 @@ func (bs BubbleSort) Sort(m model, useWeights bool) {
 func (qs QuickSort) Sort(m model, useWeights bool) {
 	delay := m.delay
 	if useWeights {
-		delay = int(float32(m.delay) * 1.5)
+		delay = int(float32(m.delay) * 1)
 	}
-	qs.quickSort(m.data, m, delay)
+
+	qs.quickSort(m.data, m, delay, 0)
 
 	m.program.Send(RenderStepMsg{true, highlightMap{}})
 }
 
-func (qs QuickSort) quickSort(data []int, m model, delay int) {
+func (qs QuickSort) quickSort(data []int, m model, delay int, offset int) {
 	if len(data) <= 1 {
 		return
 	}
 
-	pivot := data[0]
-	p1, p2 := qs.partition(data, pivot)
+	pivotIndex := qs.partition(data, m, delay, offset)
 
-	m.program.Send(RenderStepMsg{false, highlightMap{}})
-	time.Sleep(time.Millisecond * time.Duration(delay))
-
-	qs.quickSort(p1, m, delay)
-	qs.quickSort(p2, m, delay)
+	qs.quickSort(data[:pivotIndex+1], m, delay, offset)
+	qs.quickSort(data[pivotIndex+1:], m, delay, offset+pivotIndex+1)
 }
 
-func (qs QuickSort) partition(data []int, pivot int) (p1 []int, p2 []int) {
+func (qs QuickSort) partition(data []int, m model, delay int, offset int) int {
 	leftPtr := -1
 	rightPtr := len(data)
+
+	pivot := data[rand.Intn(rightPtr)]
 
 	for { // main loop
 		for { // find left element larger than pivot
@@ -133,20 +132,25 @@ func (qs QuickSort) partition(data []int, pivot int) (p1 []int, p2 []int) {
 			}
 		}
 
-		if leftPtr > rightPtr { // break loop on cross
+		if leftPtr >= rightPtr { // break loop on cross
 			break
 		}
 
 		data[leftPtr], data[rightPtr] = data[rightPtr], data[leftPtr]
+		m.program.Send(RenderStepMsg{false, highlightMap{
+			leftPtr + offset:  {},
+			rightPtr + offset: {},
+		}})
+		time.Sleep(time.Millisecond * time.Duration(delay))
 	}
 
-	return data[0:leftPtr], data[leftPtr:]
+	return rightPtr
 }
 
 func (ss SelectionSort) Sort(m model, useWeights bool) {
 	delay := m.delay
 	if useWeights {
-		delay = int(float32(delay) * 0.25)
+		delay = int(float32(delay) * 0.10)
 	}
 
 	for itr := 0; itr < len(m.data)-1; itr++ {
