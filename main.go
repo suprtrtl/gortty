@@ -10,11 +10,11 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
-func GenerateSteppedArray(n uint) []int{
+func GenerateSteppedArray(n uint) []int {
 	data := make([]int, n)
 
 	for i := range data {
-		data[i] = i;
+		data[i] = i
 	}
 
 	return data
@@ -37,7 +37,7 @@ type StartSortMsg struct{}
 func InitialModel() model {
 	sq := NewSortingQueue()
 	return model{
-		data: GenerateSteppedArray(4),
+		data:   GenerateSteppedArray(4),
 		queue:  &sq,
 		method: nil,
 		graph:  BarGraph{component: "▉"},
@@ -54,11 +54,11 @@ func (m *model) SetData() {
 
 func (m *model) DataResize() {
 	numChars := m.dims.height - 2*m.dims.spacing
-	width := float64(m.dims.width-2*m.dims.spacing)
+	width := float64(m.dims.width - 2*m.dims.spacing)
 
 	switch graphType := m.graph.(type) {
 	case BarGraph:
-		width /= float64(graphType.GetComponentSize());
+		width /= float64(graphType.GetComponentSize())
 	}
 
 	multiplier := math.Floor(width / float64(numChars))
@@ -82,6 +82,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+
+		case "=", "+":
+			// no upper bound for now
+			m.delay += 5
+			return m, nil
+
+		case "-", "_":
+			if m.delay > 5 {
+				m.delay -= 5
+				return m, nil
+			}
 		}
 
 	case ProgramPtrMsg:
@@ -133,8 +144,11 @@ func (m model) View() tea.View {
 		s += "merge sort"
 	case CombSort:
 		s += "comb sort"
+	case QuickSort:
+		s += "quick sort"
 	}
-	
+
+	s += fmt.Sprintf(" | delay %d", m.delay)
 
 	view := tea.NewView(s)
 
@@ -146,7 +160,7 @@ func (m model) View() tea.View {
 func main() {
 	p := tea.NewProgram(InitialModel())
 	go func() {
-		p.Send(ProgramPtrMsg(p))
+		p.Send(ProgramPtrMsg(p)) // TODO: find a way to get p from within into and get rid of this!
 		p.Send(StartSortMsg{})
 	}()
 
