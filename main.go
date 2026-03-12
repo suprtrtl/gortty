@@ -82,6 +82,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+
+		case "=", "+":
+			// no upper bound for now
+			m.delay += 5
+			return m, nil
+
+		case "-", "_":
+			if m.delay > 5 {
+				m.delay -= 5
+				return m, nil
+			}
 		}
 
 	case ProgramPtrMsg:
@@ -137,6 +148,8 @@ func (m model) View() tea.View {
 		s += "quick sort"
 	}
 
+	s += fmt.Sprintf(" | delay %d", m.delay)
+
 	view := tea.NewView(s)
 
 	view.AltScreen = true
@@ -147,7 +160,7 @@ func (m model) View() tea.View {
 func main() {
 	p := tea.NewProgram(InitialModel())
 	go func() {
-		p.Send(ProgramPtrMsg(p))
+		p.Send(ProgramPtrMsg(p)) // TODO: find a way to get p from within into and get rid of this!
 		p.Send(StartSortMsg{})
 	}()
 
