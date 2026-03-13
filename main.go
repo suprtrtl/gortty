@@ -146,6 +146,10 @@ func (m model) View() tea.View {
 		s += "comb sort"
 	case QuickSort:
 		s += "quick sort"
+	case ShellSort:
+		s += "shell sort"
+	default:
+		s += "ADD THE STRING (pls)"
 	}
 
 	s += fmt.Sprintf(" | delay %d", m.delay)

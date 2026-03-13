@@ -20,6 +20,7 @@ func NewSortingQueue() SortingQueue {
 			MergeSort{},
 			CombSort{},
 			QuickSort{},
+			ShellSort{},
 		},
 		0,
 	}
