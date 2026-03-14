@@ -191,6 +191,8 @@ func (m model) MethodToString() string {
 		return "quick sort"
 	case ShellSort:
 		return "shell sort"
+	case InsertionSort:
+		return "insertion sort"
 	default:
 		return "ADD THE STRING (pls)"
 	}

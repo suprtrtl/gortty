@@ -11,6 +11,7 @@ func (qs QuickSort) Sort(m model, _ bool) {
 
 	qs.quickSort(m.data, m, 0)
 
+	time.Sleep(time.Millisecond * time.Duration(m.delay))
 	m.program.Send(RenderStepMsg{true, highlightMap{}})
 }
 

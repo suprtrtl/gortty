@@ -32,6 +32,6 @@ func (cs CombSort) Sort(m model, _ bool) {
 		}
 	}
 
-	m.program.Send(RenderStepMsg{true, highlightMap{}})
 	time.Sleep(time.Millisecond * time.Duration(m.delay))
+	m.program.Send(RenderStepMsg{true, highlightMap{}})
 }

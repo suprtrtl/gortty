@@ -18,6 +18,7 @@ func (bg BogoSort) Sort(m model, useWeights bool) {
 		sorted := IsSorted(m.data)
 
 		if sorted {
+			time.Sleep(time.Millisecond * time.Duration(m.delay))
 			m.program.Send(RenderStepMsg{true, highlightMap{}})
 			return
 		} else {

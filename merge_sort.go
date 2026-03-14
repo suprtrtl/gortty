@@ -66,6 +66,6 @@ func (ms MergeSort) mergeSort(model model, data []int, l int, r int) {
 
 func (ms MergeSort) Sort(m model, _ bool) {
 	ms.mergeSort(m, m.data, 0, len(m.data)-1)
-	m.program.Send(RenderStepMsg{true, highlightMap{}})
 	time.Sleep(time.Millisecond * time.Duration(m.delay))
+	m.program.Send(RenderStepMsg{true, highlightMap{}})
 }

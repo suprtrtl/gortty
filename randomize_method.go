@@ -21,6 +21,7 @@ func NewSortingQueue() SortingQueue {
 			CombSort{},
 			QuickSort{},
 			ShellSort{},
+			InsertionSort{},
 		},
 		0,
 	}
