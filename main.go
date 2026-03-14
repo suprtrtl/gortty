@@ -39,6 +39,10 @@ type ProgramPtrMsg *tea.Program
 type StartSortMsg struct{}
 
 func InitialModel() model {
+
+	flags := NewFlags()
+	flags.Init()
+
 	sq := NewSortingQueue()
 	return model{
 		data:   GenerateSteppedArray(4),
@@ -48,6 +52,7 @@ func InitialModel() model {
 		// graph: BarGraph{component: "▊"},
 		dims:  Dimension{width: 0, height: 0, spacing: 2},
 		delay: 50,
+		hideUI: *flags.screensaver,
 	}
 }
 
