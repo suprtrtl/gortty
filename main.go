@@ -5,10 +5,13 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 
 	tea "charm.land/bubbletea/v2"
 )
+
+const keyStr string = "q : quit | h : hide ui | - : decrease delay | = : increase delay"
 
 func GenerateSteppedArray(n uint) []int {
 	data := make([]int, n)
@@ -29,6 +32,7 @@ type model struct {
 	delay       int
 	highlighted highlightMap // map[int]struct{} where keys are used for O(1) lookup of highlighted indicies
 	program     *tea.Program
+	hideUI      bool
 }
 
 type ProgramPtrMsg *tea.Program
@@ -93,6 +97,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.delay -= 5
 				return m, nil
 			}
+		case "h":
+			m.hideUI = !m.hideUI
 		}
 
 	case ProgramPtrMsg:
@@ -135,30 +141,54 @@ func (m model) View() tea.View {
 
 	s := graph + "\n"
 
-	switch m.method.(type) {
-	case BubbleSort:
-		s += "bubble sort"
-	case SelectionSort:
-		s += "selection sort"
-	case MergeSort:
-		s += "merge sort"
-	case CombSort:
-		s += "comb sort"
-	case QuickSort:
-		s += "quick sort"
-	case ShellSort:
-		s += "shell sort"
-	default:
-		s += "ADD THE STRING (pls)"
+	if !m.hideUI {
+		s += m.InfoUI()
 	}
 
-	s += fmt.Sprintf(" | delay %d", m.delay)
-
 	view := tea.NewView(s)
-
 	view.AltScreen = true
 
 	return view
+}
+
+func (m model) InfoUI() string {
+
+	method := m.MethodToString()
+	delayStr := fmt.Sprintf(" | delay: %d", m.delay)
+
+	// Calculate the minimum gap required
+	gap := m.dims.width - ((m.dims.spacing * 2) + len(method) + len(delayStr) + len(keyStr))
+	s := fmt.Sprintf(
+		"%s%s%s",
+		strings.Repeat(" ", m.dims.spacing),
+		method,
+		delayStr,
+	)
+
+	if gap > 0 {
+		s += fmt.Sprintf("%s%s", strings.Repeat(" ", gap), keyStr)
+	}
+
+	return s
+}
+
+func (m model) MethodToString() string {
+	switch m.method.(type) {
+	case BubbleSort:
+		return "bubble sort"
+	case SelectionSort:
+		return "selection sort"
+	case MergeSort:
+		return "merge sort"
+	case CombSort:
+		return "comb sort"
+	case QuickSort:
+		return "quick sort"
+	case ShellSort:
+		return "shell sort"
+	default:
+		return "ADD THE STRING (pls)"
+	}
 }
 
 func main() {
